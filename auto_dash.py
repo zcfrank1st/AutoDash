@@ -1,8 +1,7 @@
 import yaml
 from jinja2 import Template
 import ast
-
-from pprint import pprint
+import argparse
 
 dash_conf = """
 info:
@@ -87,8 +86,16 @@ if __name__ == '__main__':
 
 code_tpl = Template(content)
 code_str = code_tpl.render(**conf)
-pprint(code_str)
 
-tree = ast.parse(code_str)
-code = compile(tree, '<string>', 'exec')
-exec(code)
+parser = argparse.ArgumentParser(description="Auto generate static dashboard")
+parser.add_argument('-e','--environment', default='dev' ,choices=['dev','prod'] ,help='generate plain code for prod or run server for dev')
+argu = parser.parse_args()
+
+env = vars(argu).get('environment')
+
+if env == 'dev':
+    tree = ast.parse(code_str)
+    code = compile(tree, '<string>', 'exec')
+    exec(code)
+elif env == 'prod':
+    print(code_str)
