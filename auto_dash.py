@@ -49,6 +49,5 @@ code_str = code_tpl.render(**conf)
 pprint(code_str)
 
 tree = ast.parse(code_str)
-code = compile(tree, 'dash', 'exec')
+code = compile(tree, '<string>', 'exec')
 exec(code)
-
