@@ -1,41 +1,19 @@
+from numpy import var
 import yaml
 from jinja2 import Template
 import ast
 import argparse
 
-dash_conf = """
-info:
-    title: 'Test'
-    sub_title: 'test'
-layout:
-    row: 2
-    column: 1
-sources:
-    - postgres:
-        host: 1 
-        port: 1
-        user: 1
-        passwd: 1
-        data_handle: 'pd.DataFrame({"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]})'
-    - postgres:
-        host: 1 
-        port: 1
-        user: 1
-        passwd: 1
-        data_handle: 'pd.DataFrame({"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]})'
-graphs:
-    - bar:
-        x: 'Fruit'
-        y: 'Amount'
-        color: 'City'
-        barmode: 'group'
-    - bar:
-        x: 'Fruit'
-        y: 'Amount'
-        color: 'City'
-        barmode: 'group'
+parser = argparse.ArgumentParser(description="Auto generate static dashboard")
+parser.add_argument('-e','--environment', default='dev' ,choices=['dev','prod'] ,help='generate plain code for prod or run server for dev')
+parser.add_argument('-f','--file', default='conf.yaml' ,help="config file")
+argu = parser.parse_args()
 
-"""
+args_dict = vars(argu)
+
+dash_conf = ""
+with open(args_dict.get('file'),'rt') as f:
+    dash_conf = f.read()
 
 conf = yaml.safe_load(dash_conf)
 
@@ -81,12 +59,8 @@ if __name__ == '__main__':
 code_tpl = Template(content)
 code_str = code_tpl.render(**conf)
 
-parser = argparse.ArgumentParser(description="Auto generate static dashboard")
-parser.add_argument('-e','--environment', default='dev' ,choices=['dev','prod'] ,help='generate plain code for prod or run server for dev')
-argu = parser.parse_args()
 
-env = vars(argu).get('environment')
-
+env = args_dict.get('environment')
 if env == 'dev':
     tree = ast.parse(code_str)
     code = compile(tree, '<string>', 'exec')
