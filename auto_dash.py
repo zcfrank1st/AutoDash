@@ -1,4 +1,3 @@
-from numpy import var
 import yaml
 from jinja2 import Template
 import ast
@@ -21,14 +20,23 @@ content = """
 from dash import Dash, html, dcc
 import plotly.express as px
 import pandas as pd
+from sqlalchemy import create_engine
+import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import load_figure_template
 
-app = Dash(__name__)
+app = Dash(__name__, external_stylesheets=[dbc.themes.{{theme}}])
+load_figure_template('{{figure_theme}}')
 
-header = html.H1(children='{{ info.title }}', style={'flex': 1})
-sub_header = html.Div(children='{{ info.sub_title }}', style={'flex': 1})
-{% for source in sources -%}
+header = html.H1(children='{{ info.title }}')
+sub_header = html.Div(children='{{ info.sub_title }}')
+{% set _extra = ['csv', 'excel', 'plain'] -%}
+{%- for source in sources -%}
 {%- set sindex = loop.index -%}
-    {%- for skey in source.keys() %}
+    {%- for skey in source.keys() -%}
+{%- if skey not in _extra %}
+import {{skey}}
+engine_{{sindex}} = create_engine('{{source[skey].engine}}')
+{% endif %}
 df_{{sindex}} = {{ source[skey].data_handle }}
     {% endfor -%}
 {%- endfor -%}
@@ -36,7 +44,7 @@ df_{{sindex}} = {{ source[skey].data_handle }}
 {%- set gindex = loop.index -%}
     {%- for gkey in graph %}
 fig_{{gindex}} = px.{{ gkey }}(df_{{gindex}}, **conf.get('graphs')[{{gindex - 1}}].get('{{ gkey }}'))
-graph_{{gindex}} = dcc.Graph(id='fig_{{gindex}}',figure=fig_{{gindex}})
+graph_{{gindex}} = dcc.Graph(id='fig_{{gindex}}',figure=fig_{{gindex}},style={'flex': 1})
     {% endfor -%}
 {%- endfor %}
 app.layout = html.Div(children=[
@@ -50,7 +58,7 @@ app.layout = html.Div(children=[
     {%- endfor %}
     html.Div(children={{ graphs_list | replace("'","") }}, style={'display': 'flex', 'flex-direction': 'row'}),
 {% endfor -%}
-], style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'center'})
+])
 
 if __name__ == '__main__':
     app.run_server(debug=True)

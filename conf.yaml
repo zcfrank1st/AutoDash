@@ -1,14 +1,16 @@
+theme: 'DARKLY'
+figure_theme: 'darkly'
 info:
     title: 'Test'
     sub_title: 'test'
 layout:
-    row: 2
-    column: 1
+    row: 1
+    column: 2
 sources:
-    - postgres:
+    - csv:
         engine: 1 
         data_handle: 'pd.DataFrame({"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]})'
-    - postgres:
+    - plain:
         engine: 1
         data_handle: 'pd.DataFrame({"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]})'
 graphs:
