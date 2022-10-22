@@ -4,15 +4,15 @@ info:
     title: 'Test'
     sub_title: 'test'
 layout:
-    row: 1
-    column: 2
+    row: 2
+    column: 1
 sources:
-    - csv:
-        engine: 1 
-        data_handle: 'pd.DataFrame({"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]})'
     - plain:
-        engine: 1
-        data_handle: 'pd.DataFrame({"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]})'
+        engine:  
+        data_handle: '{"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]}'
+    - plain:
+        engine: 
+        data_handle: '{"Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],"Amount": [4, 1, 2, 2, 4, 5],"City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]}'
 graphs:
     - bar:
         x: 'Fruit'

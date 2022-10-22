@@ -36,9 +36,13 @@ sub_header = html.Div(children='{{ info.sub_title }}')
 {%- if skey not in _extra %}
 import {{skey}}
 engine_{{sindex}} = create_engine('{{source[skey].engine}}')
-{% endif %}
-df_{{sindex}} = {{ source[skey].data_handle }}
-    {% endfor -%}
+df_{{sindex}} = pd.read_sql({{ source[skey].data_handle }}, engine_{{sindex}})
+{% elif skey == 'plain' %}
+df_{{sindex}} = pd.DataFrame({{ source[skey].data_handle }})
+{% else %}
+df_{{sindex}} = pd.read_{{skey}}({{ source[skey].data_handle }})
+{% endif -%}
+    {%- endfor -%}
 {%- endfor -%}
 {%- for graph in graphs -%}
 {%- set gindex = loop.index -%}
